@@ -11,11 +11,14 @@ import { implement, lazy } from '@orpc/server'
 import * as StandardServerNode from '@orpc/standard-server-node'
 import supertest from 'supertest'
 import { expect, it, vi } from 'vitest'
-import * as z from 'zod'
+import { z } from 'zod'
+import { ORPCExceptionFilter } from './filters/orpc-exception.filter'
 import { Implement } from './implement'
 import { ORPCModule } from './module'
 
+// TODO: test error filter calls this
 const sendStandardResponseSpy = vi.spyOn(StandardServerNode, 'sendStandardResponse')
+const setStandardResponseSpy = vi.spyOn(StandardServerNode, 'setStandardResponse')
 
 beforeEach(() => {
   vi.clearAllMocks()
@@ -137,6 +140,7 @@ describe('@Implement', async () => {
     }).compile()
 
     const app = moduleRef.createNestApplication()
+    app.useGlobalFilters(new ORPCExceptionFilter())
     await app.init()
 
     const httpServer = app.getHttpServer()
@@ -237,6 +241,7 @@ describe('@Implement', async () => {
     }).compile()
 
     const app = moduleRef.createNestApplication()
+    app.useGlobalFilters(new ORPCExceptionFilter())
     await app.init()
 
     const httpServer = app.getHttpServer()
@@ -312,6 +317,7 @@ describe('@Implement', async () => {
     }).compile()
 
     const app = moduleRef.createNestApplication(new FastifyAdapter())
+    app.useGlobalFilters(new ORPCExceptionFilter())
     await app.init()
     await app.getHttpAdapter().getInstance().ready()
 
@@ -369,6 +375,7 @@ describe('@Implement', async () => {
     }).compile()
 
     const app = moduleRef.createNestApplication()
+    // app.useGlobalFilters(new ORPCExceptionFilter())
     await app.init()
 
     const httpServer = app.getHttpServer()
@@ -398,6 +405,7 @@ describe('@Implement', async () => {
     }).compile()
 
     const app = moduleRef.createNestApplication()
+    app.useGlobalFilters(new ORPCExceptionFilter())
     await app.init()
 
     const httpServer = app.getHttpServer()
@@ -411,8 +419,8 @@ describe('@Implement', async () => {
     expect(res.body).toEqual('pong')
 
     expect(interceptor).toHaveBeenCalledTimes(1)
-    expect(sendStandardResponseSpy).toHaveBeenCalledTimes(1)
-    expect(sendStandardResponseSpy).toHaveBeenCalledWith(expect.anything(), expect.anything(), expect.objectContaining({
+    expect(setStandardResponseSpy).toHaveBeenCalledTimes(1)
+    expect(setStandardResponseSpy).toHaveBeenCalledWith(expect.anything(), expect.anything(), expect.objectContaining({
       eventIteratorKeepAliveComment: '__TEST__',
     }))
   })
@@ -436,6 +444,7 @@ describe('@Implement', async () => {
     }).compile()
 
     const app = moduleRef.createNestApplication()
+    app.useGlobalFilters(new ORPCExceptionFilter())
     await app.init()
 
     const httpServer = app.getHttpServer()
@@ -459,8 +468,8 @@ describe('@Implement', async () => {
         }),
       }),
     }))
-    expect(sendStandardResponseSpy).toHaveBeenCalledTimes(1)
-    expect(sendStandardResponseSpy).toHaveBeenCalledWith(expect.anything(), expect.anything(), expect.objectContaining({
+    expect(setStandardResponseSpy).toHaveBeenCalledTimes(1)
+    expect(setStandardResponseSpy).toHaveBeenCalledWith(expect.anything(), expect.anything(), expect.objectContaining({
       eventIteratorKeepAliveComment: '__TEST__',
     }))
   })
@@ -482,6 +491,7 @@ describe('@Implement', async () => {
     const adapter = new FastifyAdapter()
     await adapter.register(FastifyCookie as any)
     const app = moduleRef.createNestApplication(adapter)
+    app.useGlobalFilters(new ORPCExceptionFilter())
     await app.init()
     await app.getHttpAdapter().getInstance().ready()
 
