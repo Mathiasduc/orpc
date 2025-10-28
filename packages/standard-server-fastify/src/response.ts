@@ -23,3 +23,22 @@ export function sendStandardResponse(
     reply.send(resBody)
   })
 }
+
+export function setStandardResponse(
+  reply: FastifyReply,
+  standardResponse: StandardResponse,
+  options: SendStandardResponseOptions = {},
+) {
+  return new Promise((resolve, reject) => {
+    reply.raw.once('error', reject)
+    reply.raw.once('close', resolve)
+
+    const resHeaders: StandardHeaders = { ...standardResponse.headers }
+
+    const resBody = toNodeHttpBody(standardResponse.body, resHeaders, options)
+
+    reply.code(standardResponse.status)
+    reply.headers(resHeaders)
+    return resolve(resBody)
+  })
+}

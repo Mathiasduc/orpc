@@ -39,3 +39,42 @@ export function sendStandardResponse(
     }
   })
 }
+export function setStandardResponse(
+  res: NodeHttpResponse,
+  standardResponse: StandardResponse,
+  options: SendStandardResponseOptions = {},
+): Promise<void | string | undefined> {
+  return new Promise((resolve, reject) => {
+    res.once('error', reject)
+    res.once('close', resolve)
+
+    const resHeaders: StandardHeaders = { ...standardResponse.headers }
+
+    const resBody = toNodeHttpBody(standardResponse.body, resHeaders, options)
+
+    res.statusCode = standardResponse.status
+    for (const [key, value] of Object.entries(resHeaders)) {
+      if (value !== undefined) {
+        res.setHeader(key, value)
+      }
+    }
+
+    if (resBody === undefined) {
+      return resolve(undefined)
+    }
+    else if (typeof resBody === 'string') {
+      return resolve(resBody)
+    }
+    else {
+      res.once('close', () => {
+        if (!resBody.closed) {
+          resBody.destroy(res.errored ?? undefined)
+        }
+      })
+
+      resBody.once('error', error => res.destroy(error))
+
+      resBody.pipe(res)
+    }
+  })
+}
