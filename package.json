@@ -1,9 +1,9 @@
 {
   "name": "@orpc/monorepo",
   "type": "module",
-  "version": "1.10.2",
+  "version": "1.10.3",
   "private": true,
-  "packageManager": "pnpm@10.18.3",
+  "packageManager": "pnpm@10.20.0",
   "scripts": {
     "prepare": "simple-git-hooks",
     "build": "pnpm run -r build",
@@ -26,7 +26,7 @@
     "packages:changelog:github": "changelogithub --draft"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^6.1.0",
+    "@antfu/eslint-config": "^6.2.0",
     "@solidjs/testing-library": "^0.8.10",
     "@sveltejs/vite-plugin-svelte": "^6.2.1",
     "@testing-library/jest-dom": "^6.9.1",
@@ -40,12 +40,12 @@
     "@vue/test-utils": "^2.4.6",
     "better-sqlite3": "^12.4.1",
     "bumpp": "^10.3.1",
-    "changelogithub": "^13.16.0",
+    "changelogithub": "^13.16.1",
     "eslint": "^9.38.0",
     "eslint-plugin-ban": "^2.0.0",
     "eslint-plugin-format": "^1.0.2",
-    "jsdom": "^27.0.1",
-    "knip": "^5.66.2",
+    "jsdom": "^27.1.0",
+    "knip": "^5.66.4",
     "lint-staged": "^16.2.6",
     "msw": "^2.11.6",
     "pkg-pr-new": "^0.0.60",
